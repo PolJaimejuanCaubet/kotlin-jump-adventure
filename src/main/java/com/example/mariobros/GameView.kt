@@ -21,7 +21,7 @@ class GameView(context: Context) : SurfaceView(context), Runnable {
         surfaceHolder = holder
         thread = Thread(this)
         mario = Mario(100f, 100f)
-        platforms.add(Platform(0f, 700f, width.toFloat(), 100f))
+        platforms.add(Platform(0f, 700f, 1000f, 100f))
     }
 
     override fun run() {
@@ -40,7 +40,7 @@ class GameView(context: Context) : SurfaceView(context), Runnable {
     private fun checkCollisions() {
         for (platform in platforms) {
             if (mario.rect.intersect(platform.rect)) {
-                mario.y = platform.y - mario.height
+                mario.y = platform.rect.top - mario.height
                 mario.isJumping = false
                 break
             }
@@ -72,7 +72,11 @@ class GameView(context: Context) : SurfaceView(context), Runnable {
 
     fun pause() {
         isPlaying = false
-        thread.join()
+        try {
+            thread.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
